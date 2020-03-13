@@ -1,11 +1,10 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import ReactMapboxGl, { Layer, Feature } from 'react-mapbox-gl'; 
 import firebase from 'firebase';
-import { FirebaseDatabaseProvider, FirebaseDatabaseMutation, FirebaseDatabaseNode } from "@react-firebase/database";
+import randomstring from 'randomstring';
+import { useListVals } from 'react-firebase-hooks/database';
 
-import Sneeze from './assets/sneeze.png';
 import Cursor from './assets/cursor.png';
-import Cough from './assets/cough.png';
 import {token, firebaseConfig} from './config';
 import './App.css';
 
@@ -17,39 +16,49 @@ const Map = ReactMapboxGl({
 }); 
 const image = new Image(100, 60);
 image.src=Cursor
+const images = ["myImage", image]; 
+
+firebase.initializeApp(firebaseConfig)
 
 function App() {
 
   const [zoom, setZoom] = useState([15]);
   const [center, setCenter] = useState([-77.0367000, 38.8968324]);
   const [panelVisible, setPanelVisible] = useState(true);
-  const images = ["myImage", image]; 
+  const [points, loading, error] = useListVals(firebase.database().ref('points'));
+  
 
   const buttonClick = (e) => {
+    e.preventDefault();
     setPanelVisible(false);
-    let effect = e.target.id
-    if (effect === 'sneeze') image.src = Sneeze; 
-    if (effect === 'cough') image.src = Cough;
+    playSound(e.target.id);
+  }
+
+  const playSound = (effect) => {
+    const audioEl = document.getElementsByClassName(effect)[0]
+    audioEl.play()
+  }
+
+  const handleClick = (map, ev) => {
+    const { lng, lat } = ev.lngLat;
+    setZoom( prevState => [...prevState, [map.transform.tileZoom + map.transform.zoomFraction]]);
+    setCenter(map.getCenter());
+
+    // save to DB
+    firebase.database().ref('points/'+randomstring.generate(7)).set({
+      coordinates: [lng, lat],
+      created_at: new Date()
+    });
   }
 
   return (
-    <FirebaseDatabaseProvider {...firebaseConfig} firebase={firebase}>
       <div className="App">
         <div className='Counter'> 
           There have been 
-
-          <FirebaseDatabaseNode path="points/">
-          {({ value }) => {
-            if (value === null || typeof value === "undefined") return null;
-            const keys = Object.keys(value);
-            return (
-              <div className='number'>{keys.length}</div> 
-            )
-          }}
-          </FirebaseDatabaseNode>
-
+          <div className='number'>{points.length}</div> 
           sneezes or coughs so far.
         </div>
+
         {panelVisible && 
         <div className="Overlay">
           <div className='frame'>
@@ -60,53 +69,35 @@ function App() {
           </div>
         </div>
         }
-        <FirebaseDatabaseMutation type="push" path="points">
-          {({ runMutation }) => (
-            <Map
-              style="mapbox://styles/mapbox/light-v10"
-              center = {center}
-              zoom={zoom}
-              containerStyle={{
-                height: '100vh',
-                width: '100vw'
-              }}
-              onClick={ async (map, ev) => {
-                const { lng, lat } = ev.lngLat;
-                setZoom( prevState => [...prevState, [map.transform.tileZoom + map.transform.zoomFraction]]);
-                setCenter(map.getCenter());
 
-                // save to DB
-                await runMutation({
-                  point: [lat,lng],
-                  created_at: firebase.database.ServerValue.TIMESTAMP,
-                });
-              }}
-              >
-              <Layer 
-                type="symbol" 
-                id="marker" 
-                layout={{ "icon-image": "marker-15", "icon-allow-overlap": true}}
-                images={images}
-                >
+        <Map
+          style="mapbox://styles/mapbox/light-v10"
+          center = {center}
+          pitch={0}
+          zoom={zoom}
+          containerStyle={{
+            height: '100vh',
+            width: '100vw'
+          }}
+          onClick={handleClick}
+          >
+            <Layer
+            type='symbol'
+            id="marker" 
+            layout={{ "icon-image": "myImage", "icon-allow-overlap": true}}
+            images={images}
+            >
+            {points.map((point, i) => <Feature key={i} coordinates={point.coordinates} />)}
+            </Layer>
+        </Map>
 
-                <FirebaseDatabaseNode path="points/">
-                  {data => {
-                    const { value } = data;
-                    if (value === null || typeof value === "undefined") return null;
-                    const keys = Object.keys(value);
-                    const values = Object.values(value);
-                    return values.map((point, i) => (
-                      <Feature key={keys[i]} coordinates={point} />
-                    ));
-                  }}
-                </FirebaseDatabaseNode>
-
-              </Layer>
-            </Map>
-          )}
-        </FirebaseDatabaseMutation>;
+        <audio className="cough">
+          <source src="cough.wav"></source>
+        </audio>
+        <audio className="sneeze">
+          <source src="sneeze.wav"></source>
+        </audio>
       </div>
-    </FirebaseDatabaseProvider>
   );
 }
 
