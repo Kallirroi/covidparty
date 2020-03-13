@@ -12,7 +12,7 @@ const Map = ReactMapboxGl({
   // scrollZoom: false,
 }); 
 const image = new Image(100, 100);
-image.src=Cough
+image.src=''
 
 function App() {
 
@@ -55,7 +55,7 @@ function App() {
       </div>
       }
       <Map
-        style="mapbox://styles/mapbox/dark-v10"
+        style="mapbox://styles/mapbox/light-v10"
         center = {center}
         zoom={zoom}
         containerStyle={{
