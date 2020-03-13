@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
 import ReactMapboxGl, { Layer, Feature } from 'react-mapbox-gl'; 
 import Sneeze from './sneeze.png';
-import Cough from './cough.gif';
+import Cursor from './cursor.png';
+import Cough from './cough.png';
 import {token} from './config';
 import './App.css';
 
@@ -11,8 +12,8 @@ const Map = ReactMapboxGl({
   touchZoomRotate: false,
   // scrollZoom: false,
 }); 
-const image = new Image(100, 100);
-image.src=''
+const image = new Image(60, 60);
+image.src=Cursor
 
 function App() {
 
