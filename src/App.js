@@ -1,8 +1,9 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import ReactMapboxGl, { Layer, Feature } from 'react-mapbox-gl'; 
 import firebase from 'firebase';
 import randomstring from 'randomstring';
 import { useListVals } from 'react-firebase-hooks/database';
+import useResizeAware from 'react-resize-aware'; 
 
 import Cursor from './assets/cursor.png';
 import {token, firebaseConfig} from './config';
@@ -25,8 +26,8 @@ function App() {
   const [zoom, setZoom] = useState([15]);
   const [center, setCenter] = useState([-77.0367000, 38.8968324]);
   const [panelVisible, setPanelVisible] = useState(true);
-  const [points, loading, error] = useListVals(firebase.database().ref('points'));
-  
+  const [points] = useListVals(firebase.database().ref('points'));
+  const [resizeListener, sizes] = useResizeAware();
 
   const buttonClick = (e) => {
     e.preventDefault();
@@ -61,7 +62,8 @@ function App() {
 
         {panelVisible && 
         <div className="Overlay">
-          <div className='frame'>
+          {resizeListener} 
+          <div className='frame' style={{width: 0.5*sizes.width, top: 0.2*sizes.height}}>
             <p>Today I feel like</p>
               <button onClick={buttonClick} id='cough'>coughing</button>
               <button onClick={buttonClick} id='sneeze'>sneezing</button>
@@ -71,7 +73,7 @@ function App() {
         }
 
         <Map
-          style="mapbox://styles/mapbox/light-v10"
+          style={'mapbox://styles/mapbox/dark-v10'}
           center = {center}
           pitch={0}
           zoom={zoom}
