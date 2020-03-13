@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import ReactMapboxGl, { Layer, Feature } from 'react-mapbox-gl'; 
-import Sneeze from './sneeze.png';
-import Cursor from './cursor.png';
-import Cough from './cough.png';
+import Sneeze from './assets/sneeze.png';
+import Cursor from './assets/cursor.png';
+import Cough from './assets/cough.png';
 import {token} from './config';
 import './App.css';
 
@@ -36,8 +36,8 @@ function App() {
   const buttonClick = (e) => {
     setPanelVisible(false);
     let effect = e.target.id
-    if (effect === 'sneeze') image.src = Sneeze; 
-    if (effect === 'cough') image.src = Cough;
+    if (effect === 'sneeze' && effect !== '') image.src = Sneeze; 
+    if (effect === 'cough' && effect !== '') image.src = Cough;
   }
 
   return (
@@ -48,10 +48,10 @@ function App() {
       {panelVisible && 
       <div className="Overlay">
         <div className='frame'>
-        <p>Today I feel like</p>
-          <button onClick={buttonClick} id='cough'>coughing</button>
-          <button onClick={buttonClick} id='sneeze'>sneezing</button>
-        <p>around the White House</p>
+          <p>Today I feel like</p>
+            <button onClick={buttonClick} id='cough'>coughing</button>
+            <button onClick={buttonClick} id='sneeze'>sneezing</button>
+          <p>around the White House</p>
         </div>
       </div>
       }
