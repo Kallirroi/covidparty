@@ -93,12 +93,16 @@ function App() {
             </Layer>
         </Map>
 
-        <audio className="cough">
-          <source src="cough.wav"></source>
-        </audio>
-        <audio className="sneeze">
-          <source src="sneeze.wav"></source>
-        </audio>
+        <div className='credits'>Made by <a href="https://kalli-retzepi.com/" target='_blank' rel="noopener noreferrer" >Kalli</a> during her time at the <a href="https://www.recurse.com/" target='_blank' rel="noopener noreferrer">Recurse Center</a>.</div>
+
+        <div style={{display: 'none'}}>
+          <audio className="cough">
+            <source src="cough.wav"></source>
+          </audio>
+          <audio className="sneeze">
+            <source src="sneeze.wav"></source>
+          </audio>
+        </div>
       </div>
   );
 }

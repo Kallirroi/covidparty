@@ -71,3 +71,24 @@ p {
   z-index: 0;
   display: block;
 }
+
+.mapboxgl-control-container {
+  display: none;
+}
+.credits {
+  position: absolute;
+  z-index: 1;
+  bottom: 0;
+  right: 0;
+  padding: 10px;
+  color: #000;
+  background-color: #fff;
+  font-size: 1vw;
+  line-height: 1.3;
+  text-align: left;
+  border-radius: 3px;
+}
+
+.credits > a {
+  color: #000;
+}
