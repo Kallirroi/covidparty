@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import ReactMapboxGl, { Layer, Feature } from 'react-mapbox-gl'; 
 import firebase from 'firebase';
-import { FirebaseDatabaseProvider, FirebaseDatabaseMutation } from "@react-firebase/database";
+import { FirebaseDatabaseProvider, FirebaseDatabaseMutation, FirebaseDatabaseNode } from "@react-firebase/database";
 
 import Sneeze from './assets/sneeze.png';
 import Cursor from './assets/cursor.png';
@@ -37,7 +37,19 @@ function App() {
     <FirebaseDatabaseProvider {...firebaseConfig} firebase={firebase}>
       <div className="App">
         <div className='Counter'> 
-          There have been <div className='number'>{points.length}</div> sneezes or coughs so far.
+          There have been 
+
+          <FirebaseDatabaseNode path="points/">
+          {({ value }) => {
+            if (value === null || typeof value === "undefined") return null;
+            const keys = Object.keys(value);
+            return (
+              <div className='number'>{keys.length}</div> 
+            )
+          }}
+        </FirebaseDatabaseNode>
+
+          sneezes or coughs so far.
         </div>
         {panelVisible && 
         <div className="Overlay">
