@@ -11,7 +11,6 @@ const Map = ReactMapboxGl({
   touchZoomRotate: false,
   // scrollZoom: false,
 }); 
-
 const image = new Image(100, 100);
 image.src=Cough
 
@@ -37,11 +36,14 @@ function App() {
     setPanelVisible(false);
     let effect = e.target.id
     if (effect === 'sneeze') image.src = Sneeze; 
-    if (effect === 'cough') image.src = Cough; 
+    if (effect === 'cough') image.src = Cough;
   }
 
   return (
     <div className="App">
+      <div className='Counter'> 
+        There have been <div className='number'>{points.length}</div> sneezes or coughs so far.
+      </div>
       {panelVisible && 
       <div className="Overlay">
         <div className='frame'>
