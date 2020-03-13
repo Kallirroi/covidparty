@@ -22,7 +22,6 @@ function App() {
 
   const [zoom, setZoom] = useState([15]);
   const [center, setCenter] = useState([-77.0367000, 38.8968324]);
-  const [points, setPoints] = useState([]); //retrieve points from Firebase API
   const [panelVisible, setPanelVisible] = useState(true);
   const images = ["myImage", image]; 
 
@@ -47,7 +46,7 @@ function App() {
               <div className='number'>{keys.length}</div> 
             )
           }}
-        </FirebaseDatabaseNode>
+          </FirebaseDatabaseNode>
 
           sneezes or coughs so far.
         </div>
@@ -72,27 +71,36 @@ function App() {
                 width: '100vw'
               }}
               onClick={ async (map, ev) => {
-                
                 const { lng, lat } = ev.lngLat;
-                setPoints( prevState => [...prevState, [lng, lat]]);
                 setZoom( prevState => [...prevState, [map.transform.tileZoom + map.transform.zoomFraction]]);
                 setCenter(map.getCenter());
 
                 // save to DB
                 await runMutation({
-                  point_lat: lat,
-                  point_long: lng,
+                  point: [lat,lng],
                   created_at: firebase.database.ServerValue.TIMESTAMP,
-                  updated_at: firebase.database.ServerValue.TIMESTAMP
                 });
               }}
               >
               <Layer 
                 type="symbol" 
                 id="marker" 
-                layout={{ "icon-image": "myImage", "icon-allow-overlap": true }}
-                images={images}>
-                {points.map((point, i) => <Feature key={i} coordinates={point} />)}
+                layout={{ "icon-image": "marker-15", "icon-allow-overlap": true}}
+                images={images}
+                >
+
+                <FirebaseDatabaseNode path="points/">
+                  {data => {
+                    const { value } = data;
+                    if (value === null || typeof value === "undefined") return null;
+                    const keys = Object.keys(value);
+                    const values = Object.values(value);
+                    return values.map((point, i) => (
+                      <Feature key={keys[i]} coordinates={point} />
+                    ));
+                  }}
+                </FirebaseDatabaseNode>
+
               </Layer>
             </Map>
           )}
