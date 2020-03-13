@@ -18,7 +18,6 @@
   cursor: crosshair;
 }
 
-
 button {
   text-transform: uppercase;
   font-size: 5rem;
@@ -45,5 +44,5 @@ p {
 }
 
 .mapgboxgl-map:hover {
-  cursor:  url('./cursor.png'), auto;
+  cursor:  url('./cursor.png'), auto !important;
 }

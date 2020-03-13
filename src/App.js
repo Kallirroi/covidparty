@@ -1,10 +1,13 @@
 import React, {useState} from 'react';
 import ReactMapboxGl, { Layer, Feature } from 'react-mapbox-gl'; 
+import {token} from './config';
 import './App.css';
 
 const Map = ReactMapboxGl({
-  accessToken:
-    'pk.eyJ1Ijoia2FsbGlycm9pIiwiYSI6ImNrN3BsbmE0bzAxaGczZnBydnQ5Y2ZvbTkifQ.EopO3KKBRWLJ9C-euZSDdQ'
+  accessToken: token,
+  doubleClickZoom: false,
+  touchZoomRotate: false,
+  scrollZoom: false,
 }); 
 
 function App() {
@@ -19,10 +22,15 @@ function App() {
     setPoints( prevState => [...prevState, [lng, lat]]);
     setZoom( prevState => [...prevState, [map.transform.tileZoom + map.transform.zoomFraction]]);
     setCenter(map.getCenter());
+
+    // set coordinates to Firebase API ? 
+
   };
 
-  const buttonClick = () => {
+  const buttonClick = (e) => {
     setPanelVisible(false);
+    let effect = e.target.id
+    // set custom pin or audio here according to ID clicked
   }
 
   return (
@@ -31,8 +39,8 @@ function App() {
       <div className="Overlay">
         <div className='frame'>
         <p>Today I feel like</p>
-          <button onClick={buttonClick} className='cough'>coughing</button>
-          <button onClick={buttonClick} className='sneeze'>sneezing</button>
+          <button onClick={buttonClick} id='cough'>coughing</button>
+          <button onClick={buttonClick} id='sneeze'>sneezing</button>
         <p>around the White House</p>
         </div>
       </div>
