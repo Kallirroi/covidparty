@@ -1,5 +1,7 @@
 import React, {useState} from 'react';
 import ReactMapboxGl, { Layer, Feature } from 'react-mapbox-gl'; 
+import Sneeze from './sneeze.png';
+import Cough from './cough.gif';
 import {token} from './config';
 import './App.css';
 
@@ -7,8 +9,11 @@ const Map = ReactMapboxGl({
   accessToken: token,
   doubleClickZoom: false,
   touchZoomRotate: false,
-  scrollZoom: false,
+  // scrollZoom: false,
 }); 
+
+const image = new Image(100, 100);
+image.src=Cough
 
 function App() {
 
@@ -16,6 +21,7 @@ function App() {
   const [center, setCenter] = useState([-77.0367000, 38.8968324]);
   const [points, setPoints] = useState([]);
   const [panelVisible, setPanelVisible] = useState(true);
+  const images = ["myImage", image]; 
 
   const handleClick = (map, ev) => {
     const { lng, lat } = ev.lngLat;
@@ -30,7 +36,8 @@ function App() {
   const buttonClick = (e) => {
     setPanelVisible(false);
     let effect = e.target.id
-    // set custom pin or audio here according to ID clicked
+    if (effect === 'sneeze') image.src = Sneeze; 
+    if (effect === 'cough') image.src = Cough; 
   }
 
   return (
@@ -55,7 +62,11 @@ function App() {
         }}
         onClick={handleClick}
       >
-      <Layer type="symbol" id="marker" layout={{ 'icon-image': 'marker-15' }}>
+      <Layer 
+        type="symbol" 
+        id="marker" 
+        layout={{ "icon-image": "myImage", "icon-allow-overlap": true }}
+        images={images}>
         {points.map((point, i) => <Feature key={i} coordinates={point} />)}
       </Layer>
       </Map>
