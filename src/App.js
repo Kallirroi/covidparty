@@ -9,7 +9,6 @@ import Cursor from './assets/cursor.png';
 import './App.css';
 
 dotenv.config()
-console.log(process.env)
 const Map = ReactMapboxGl({
   accessToken: process.env.REACT_APP_token,
   doubleClickZoom: false,
