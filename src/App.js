@@ -4,13 +4,14 @@ import firebase from 'firebase';
 import randomstring from 'randomstring';
 import { useListVals } from 'react-firebase-hooks/database';
 import useResizeAware from 'react-resize-aware'; 
-
+import dotenv from 'dotenv'; 
 import Cursor from './assets/cursor.png';
-import {token, firebaseConfig} from './config';
 import './App.css';
 
+dotenv.config()
+console.log(process.env)
 const Map = ReactMapboxGl({
-  accessToken: token,
+  accessToken: process.env.REACT_APP_token,
   doubleClickZoom: false,
   touchZoomRotate: false,
   // scrollZoom: false,
@@ -19,7 +20,16 @@ const image = new Image(100, 60);
 image.src=Cursor
 const images = ["myImage", image]; 
 
-firebase.initializeApp(firebaseConfig)
+firebase.initializeApp({
+  apiKey: process.env.REACT_APP_apiKey,
+  authDomain: process.env.REACT_APP_authDomain,
+  databaseURL: process.env.REACT_APP_databaseURL,
+  projectId: process.env.REACT_APP_projectId,
+  storageBucket: process.env.REACT_APP_storageBucket,
+  messagingSenderId: process.env.REACT_APP_messagingSenderId,
+  appId: process.env.REACT_APP_appId,
+  measurementId: process.env.REACT_APP_measurementId
+})
 
 function App() {
 
